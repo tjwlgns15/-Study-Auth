@@ -1,0 +1,33 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/auth_study?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    username: jihun2
+    password: ajrmwks15!@
+    name: auth_study
+
+  jpa:
+    open-in-view: true
+    hibernate:
+      ddl-auto: create-drop
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+        use-new-id-generator-mappings: false
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+        default_batch_fetch_size: 100
+      dialect: org.hibernate.dialect.MySQL8InnoDBDialect
+
+  security:
+    user:
+      name: user
+      password: 1234
+
+  logging:
+    level:
+      org.hibernate.SQL: debug
+
+jwt:
+  key: cXdlcmFzZGZxd2VyYXNkZnF3ZXJhc2RmcXdlcmFzZGYASD
