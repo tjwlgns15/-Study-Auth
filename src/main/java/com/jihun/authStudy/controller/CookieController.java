@@ -94,7 +94,12 @@ public class CookieController {
 
         // 쿠키 발급
         Cookie cookie = new Cookie("userId", String.valueOf(user.getId()));
-        cookie.setMaxAge(60 * 60);
+        cookie.setMaxAge(60 * 60);     // 1시간 유효
+//        cookie.setHttpOnly(true);      // XSS 방지
+//        cookie.setSecure(true);        // HTTPS 전용
+//        cookie.setPath("/");           // 전체 경로에서 사용 가능
+//        cookie.setDomain("localhost"); // 로컬 테스트용
+
         response.addCookie(cookie);
 
         return "redirect:/cookie-signin";
