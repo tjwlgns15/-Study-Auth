@@ -67,6 +67,15 @@ public class UserService {
     }
 
 
+    public User getLoginUserByUsername(String username) {
+        if(username == null) return null;
+
+        Optional<User> optionalUser = userRepository.findByUsername(username);
+        return optionalUser.orElse(null);
+
+    }
+
+
     /**
      * 로그인 관련 공부이므로 생성 이외의 CRUD는 다루지 않음
      */
