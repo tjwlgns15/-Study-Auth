@@ -2,7 +2,6 @@ package com.jihun.authStudy.service;
 
 import com.jihun.authStudy.entity.User;
 import com.jihun.authStudy.repository.UserRepository;
-import com.jihun.authStudy.userdetails.PrincipalDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

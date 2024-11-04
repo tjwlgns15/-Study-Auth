@@ -1,4 +1,4 @@
-package com.jihun.authStudy.userdetails;
+package com.jihun.authStudy.service;
 
 import com.jihun.authStudy.entity.User;
 import lombok.RequiredArgsConstructor;

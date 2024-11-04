@@ -30,4 +30,4 @@ spring:
       org.hibernate.SQL: debug
 
 jwt:
-  key: cXdlcmFzZGZxd2VyYXNkZnF3ZXJhc2RmcXdlcmFzZGYASD
+  key: PKasyBzuROgJ_GooKr33AYBVxb6B2tydOeFg6VH-U2c # Jihun-Security-Key-6875
