@@ -1,17 +1,33 @@
 package com.jihun.authStudy.service;
 
 import com.jihun.authStudy.entity.User;
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Map;
 
 @RequiredArgsConstructor
-public class PrincipalDetails implements UserDetails {
+@AllArgsConstructor
+public class PrincipalDetails implements UserDetails, OAuth2User {
 
     private final User user;
+
+    private Map<String, Object> attributes;
+
+    @Override
+    public String getName() {
+        return null;
+    }
+
+    @Override
+    public Map<String, Object> getAttributes() {
+        return attributes;
+    }
 
     // 권한 관련 작업을 하기 위한 role return
     @Override

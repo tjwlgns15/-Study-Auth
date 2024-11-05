@@ -2,6 +2,9 @@ package com.jihun.authStudy.config;
 
 import com.jihun.authStudy.entity.Role;
 import com.jihun.authStudy.filter.JwtTokenFilter;
+import com.jihun.authStudy.handler.MyAccessDeniedHandler;
+import com.jihun.authStudy.handler.MyAuthenticationEntryPoint;
+import com.jihun.authStudy.service.PrincipalOauth2UserService;
 import com.jihun.authStudy.service.UserService;
 import com.jihun.authStudy.utils.JwtTokenUtil;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +23,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-/*    //  form 로그인
+    /*    //  form 로그인
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
@@ -46,8 +49,9 @@ public class SecurityConfig {
 
         return http.build();
     }
- */
+    */
 
+    /*
     private final UserService userService;
 
     @Value("${jwt.key}")
@@ -67,5 +71,50 @@ public class SecurityConfig {
                                 .anyRequest().permitAll()
                 )
                 .build();
+    }
+    */
+
+    private final PrincipalOauth2UserService principalOauth2UserService;
+
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http
+                .csrf(AbstractHttpConfigurer::disable)
+                .authorizeHttpRequests(auth -> auth
+                        // 인증
+                        .requestMatchers("/security-signin/info").authenticated()
+                        // 인가
+                        .requestMatchers("/security-signin/admin/**").hasAuthority(Role.ADMIN.name())
+                        .anyRequest().permitAll()
+                )
+                // Form Login 방식
+                .formLogin(form -> form
+                        // 로그인 파라미터
+                        .usernameParameter("username")
+                        .passwordParameter("password")
+                        .loginPage("/security-signin/signin")
+                        .defaultSuccessUrl("/security-signin")
+                        .failureUrl("/security-signin/signin")
+                )
+                .logout(logout -> logout
+                        .logoutUrl("/security-signin/logout")
+                        .invalidateHttpSession(true)
+                        .deleteCookies("JSESSIONID")
+                )
+                // OAuth 로그인
+                .oauth2Login(oauth2 -> oauth2
+                        .loginPage("/security-signin/signin")
+                        .defaultSuccessUrl("/security-signin")
+                        .userInfoEndpoint(userInfo -> userInfo
+                                .userService(principalOauth2UserService)
+                        )
+                )
+                // 예외 처리
+                .exceptionHandling(exception -> exception
+                        .authenticationEntryPoint(new MyAuthenticationEntryPoint())
+                        .accessDeniedHandler(new MyAccessDeniedHandler())
+                );
+
+        return http.build();
     }
 }
