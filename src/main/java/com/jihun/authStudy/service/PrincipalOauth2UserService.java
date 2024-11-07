@@ -12,7 +12,10 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
+import java.util.Map;
 import java.util.Optional;
+
+import static com.jihun.authStudy.entity.Role.USER;
 
 @Service
 @RequiredArgsConstructor
@@ -26,26 +29,37 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
         OAuth2User oAuth2User = super.loadUser(userRequest);
         log.info("getAttributes : {}", oAuth2User.getAttributes());
 
+        OAuth2UserInfo oAuth2UserInfo = null;
         String provider = userRequest.getClientRegistration().getRegistrationId();
-        String providerId = oAuth2User.getAttribute("sub");
-        String loginId = provider + "_" +providerId;
 
-        Optional<User> optionalUser = userRepository.findByUsername(loginId);
-        User user;
-
-        if(optionalUser.isEmpty()) {
-            user = User.builder()
-                    .username(loginId)
-                    .nickname(oAuth2User.getAttribute("name"))
-                    .provider(provider)
-                    .providerId(providerId)
-                    .role(Role.USER)
-                    .build();
-            userRepository.save(user);
-        } else {
-            user = optionalUser.get();
+        if (provider.equals("google")) {
+            log.info("google login request");
+            oAuth2UserInfo = new GoogleUserInfo(oAuth2User.getAttributes());
+        } else if (provider.equals("kakao")) {
+            log.info("kakao login request");
+            oAuth2UserInfo = new KakaoUserInfo(oAuth2User.getAttributes());
+        } else if (provider.equals("naver")) {
+            log.info("naver login request");
+            oAuth2UserInfo = new NaverUserInfo((Map)oAuth2User.getAttributes().get("response"));
         }
 
+        String providerId = oAuth2UserInfo.getProviderId();
+//        String email = oAuth2UserInfo.getEmail();
+        String username = provider + "_" + providerId;
+        String nickname = oAuth2UserInfo.getName();
+
+
+        User user = userRepository.findByUsername(username).orElseGet(
+                () -> {User newUser = User.builder()
+                        .username(username)
+                        .nickname(nickname)
+                        .provider(provider)
+                        .providerId(providerId)
+                        .role(USER)
+                        .build();
+                    return userRepository.save(newUser);
+                });
         return new PrincipalDetails(user, oAuth2User.getAttributes());
+
     }
 }
